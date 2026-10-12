@@ -1,7 +1,10 @@
 
 from fastapi import APIRouter, Depends, Response, status
+from sqlalchemy.orm import Session
 
+from database import get_db
 from modelos.paciente import PacienteCrear, PacienteRespuesta
+from repositorios.paciente_repository import PacienteRepository
 from servicios.paciente_service import PacienteService
 
 
@@ -11,12 +14,13 @@ router = APIRouter(
 )
 
 
-# INSTANCIA COMPARTIDA PARA ESTE EJEMPLO
-servicio = PacienteService()
+def obtener_servicio(
+    db: Session = Depends(get_db)
+) -> PacienteService:
 
+    repository = PacienteRepository(db)
 
-def obtener_servicio() -> PacienteService:
-    return servicio
+    return PacienteService(repository)
 
 
 # GET - LISTAR
@@ -66,4 +70,7 @@ def eliminar(
     service: PacienteService = Depends(obtener_servicio)
 ):
     service.eliminar(id)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    return Response(
+        status_code=status.HTTP_204_NO_CONTENT
+    )

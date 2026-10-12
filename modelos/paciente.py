@@ -1,5 +1,10 @@
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator
+)
 
 
 class PacienteCrear(BaseModel):
@@ -19,3 +24,5 @@ class PacienteCrear(BaseModel):
 
 class PacienteRespuesta(PacienteCrear):
     id: int
+
+    model_config = ConfigDict(from_attributes=True)
